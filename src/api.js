@@ -1,4 +1,6 @@
-export const fetchApi = () => {
+import { convertFtoC } from './util';
+
+export const fetchForecast = () => {
     const url = "https://query.yahooapis.com/v1/public/yql?q=select%20*%20from%20weather.forecast%20where%20woeid%20in%20(select%20woeid%20from%20geo.places(1)%20where%20text=\"São%20Carlos,%20SP\")&format=json&env=store://datatables.org/alltableswithkeys";
     return fetch({
         url,
@@ -16,6 +18,10 @@ export const fetchApi = () => {
                     }
                 }
             } = await result.json();
-            return forecast;
+            return forecast.map((i) => ({
+                ...i,
+                    high: convertFtoC(i.high) + "°",
+                low: convertFtoC(i.low) + "°"
+            }));
         });
 }
